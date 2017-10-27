@@ -1,4 +1,12 @@
 # MyContractor
 Start MyContractor Application 
-moh
-Good luck All
+
+## To Start application
+    npm install
+
+## To Build Application
+
+    dotnet build
+
+## To Run Application
+    dotnet run
