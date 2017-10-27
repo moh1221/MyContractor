@@ -10,3 +10,6 @@ Start MyContractor Application
 
 ## To Run Application
     dotnet run
+
+## Application web started
+    http://localhost:5000

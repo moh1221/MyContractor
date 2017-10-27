@@ -1,5 +1,6 @@
 import { Component, Inject } from '@angular/core';
 import { Http } from '@angular/http';
+import { WeatherForecast } from './WeatherForecast';
 
 @Component({
     selector: 'fetchdata',
@@ -15,9 +16,4 @@ export class FetchDataComponent {
     }
 }
 
-interface WeatherForecast {
-    dateFormatted: string;
-    temperatureC: number;
-    temperatureF: number;
-    summary: string;
-}
+
