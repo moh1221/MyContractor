@@ -2,7 +2,8 @@ import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { HttpModule } from '@angular/http';
-import { RouterModule } from '@angular/router';
+import { AppRouterModule } from './app-routing.module';
+import { FetchDataService } from './components/fetchdata/fetchdata.service';
 
 import { AppComponent } from './components/app/app.component';
 import { NavMenuComponent } from './components/navmenu/navmenu.component';
@@ -22,8 +23,9 @@ import { CounterComponent } from './components/counter/counter.component';
         CommonModule,
         HttpModule,
         FormsModule,
-        RouterModule
+        AppRouterModule
     ],
+    providers: [FetchDataService]
 })
 export class AppModuleShared {
 }
