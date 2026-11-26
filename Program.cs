@@ -1,25 +1,37 @@
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore;
-using Microsoft.AspNetCore.Hosting;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Logging;
+using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.FileProviders;
 
-namespace MyContractor
+var builder = WebApplication.CreateBuilder(args);
+builder.Services.AddControllers();
+builder.Services.AddProblemDetails();
+
+var app = builder.Build();
+
+if (!app.Environment.IsDevelopment())
 {
-    public class Program
-    {
-        public static void Main(string[] args)
-        {
-            BuildWebHost(args).Run();
-        }
-
-        public static IWebHost BuildWebHost(string[] args) =>
-            WebHost.CreateDefaultBuilder(args)
-                .UseStartup<Startup>()
-                .Build();
-    }
+    app.UseExceptionHandler();
 }
+
+var localAngularRoot = Path.Combine(app.Environment.ContentRootPath, "dist", "client", "browser");
+using var localAngularFiles = File.Exists(Path.Combine(localAngularRoot, "index.html"))
+    ? new PhysicalFileProvider(localAngularRoot)
+    : null;
+
+var angularFiles = new StaticFileOptions
+{
+    FileProvider = localAngularFiles ?? app.Environment.WebRootFileProvider
+};
+
+// Publish places the Angular assets in wwwroot. A source checkout instead serves
+// the Angular build output from dist alongside the existing assets in wwwroot.
+app.UseStaticFiles();
+if (localAngularFiles is not null)
+{
+    app.UseStaticFiles(angularFiles);
+}
+
+app.MapControllers();
+app.MapFallback("/api/{**path}", static context => Results.NotFound().ExecuteAsync(context));
+app.MapFallbackToFile("index.html", angularFiles);
+
+app.Run();

@@ -234,3 +234,8 @@ _Pvt_Extensions
 
 # FAKE - F# Make
 .fake/
+
+# Modern Angular build outputs and caches
+/.angular/
+/dist/
+/coverage/
