@@ -1,17 +1,6 @@
-namespace MyContractor.Model
-{
-public class WeatherForecast
-        {
-            public string DateFormatted { get; set; }
-            public int TemperatureC { get; set; }
-            public string Summary { get; set; }
+namespace MyContractor.Model;
 
-            public int TemperatureF
-            {
-                get
-                {
-                    return 32 + (int)(TemperatureC / 0.5556);
-                }
-            }
-        }
+public sealed record WeatherForecast(string DateFormatted, int TemperatureC, string Summary)
+{
+    public int TemperatureF => (int)Math.Round(TemperatureC * 9.0 / 5.0 + 32);
 }

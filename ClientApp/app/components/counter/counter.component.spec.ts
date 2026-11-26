@@ -1,29 +1,27 @@
-/// <reference path="../../../../node_modules/@types/jasmine/index.d.ts" />
-import { assert } from 'chai';
+import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { beforeEach, describe, expect, it } from 'vitest';
 import { CounterComponent } from './counter.component';
-import { TestBed, async, ComponentFixture } from '@angular/core/testing';
 
-let fixture: ComponentFixture<CounterComponent>;
+describe('CounterComponent', () => {
+  let fixture: ComponentFixture<CounterComponent>;
+  let root: HTMLElement;
 
-describe('Counter component', () => {
-    beforeEach(() => {
-        TestBed.configureTestingModule({ declarations: [CounterComponent] });
-        fixture = TestBed.createComponent(CounterComponent);
-        fixture.detectChanges();
-    });
+  beforeEach(() => {
+    fixture = TestBed.createComponent(CounterComponent);
+    root = fixture.nativeElement;
+    fixture.detectChanges();
+  });
 
-    it('should display a title', async(() => {
-        const titleText = fixture.nativeElement.querySelector('h1').textContent;
-        expect(titleText).toEqual('Counter');
-    }));
+  it('displays the title and an initial count of zero', () => {
+    expect(root.querySelector('h1')?.textContent).toBe('Counter');
+    expect(root.querySelector('[role="status"] strong')?.textContent).toBe('0');
+  });
 
-    it('should start with count 0, then increments by 1 when clicked', async(() => {
-        const countElement = fixture.nativeElement.querySelector('strong');
-        expect(countElement.textContent).toEqual('0');
+  it('increments once for each button click', () => {
+    root.querySelector('button')!.click();
+    root.querySelector('button')!.click();
+    fixture.detectChanges();
 
-        const incrementButton = fixture.nativeElement.querySelector('button');
-        incrementButton.click();
-        fixture.detectChanges();
-        expect(countElement.textContent).toEqual('1');
-    }));
+    expect(root.querySelector('strong')?.textContent).toBe('2');
+  });
 });

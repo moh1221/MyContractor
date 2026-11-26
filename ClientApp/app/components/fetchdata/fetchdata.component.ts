@@ -1,25 +1,33 @@
-import { Component, Inject, OnInit } from '@angular/core';
+import { Component, DestroyRef, OnInit, inject, signal } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { WeatherForecast } from './WeatherForecast';
-import { FetchDataService } from './fetchdata.service'
+import { FetchDataService } from './fetchdata.service';
+
+type WeatherState =
+  | { kind: 'loading' }
+  | { kind: 'error' }
+  | { kind: 'loaded'; forecasts: WeatherForecast[] };
 
 @Component({
-    selector: 'fetchdata',
-    templateUrl: './fetchdata.component.html'
+  selector: 'app-fetch-data',
+  templateUrl: './fetchdata.component.html',
+  styleUrl: './fetchdata.component.css',
 })
 export class FetchDataComponent implements OnInit {
-    public forecasts: WeatherForecast[];
-    
-    constructor(private fetchDataService: FetchDataService) {
-    }
+  private readonly service = inject(FetchDataService);
+  private readonly destroyRef = inject(DestroyRef);
+  private readonly state = signal<WeatherState>({ kind: 'loading' });
+  readonly weather = this.state.asReadonly();
 
-    ngOnInit(): void {
-        this.getForecast();
-      }
+  ngOnInit(): void {
+    this.loadForecasts();
+  }
 
-    getForecast(): void {
-        this.fetchDataService.getForecast().then(respond =>  this.forecasts = respond)
-    }
-
+  loadForecasts(): void {
+    this.state.set({ kind: 'loading' });
+    this.service.getForecast().pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
+      next: (forecasts) => this.state.set({ kind: 'loaded', forecasts }),
+      error: () => this.state.set({ kind: 'error' }),
+    });
+  }
 }
-
-

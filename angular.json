@@ -1,0 +1,54 @@
+{
+  "$schema": "./node_modules/@angular/cli/lib/config/schema.json",
+  "version": 1,
+  "projects": {
+    "mycontractor": {
+      "projectType": "application",
+      "root": "",
+      "sourceRoot": "ClientApp",
+      "architect": {
+        "build": {
+          "builder": "@angular/build:application",
+          "options": {
+            "outputPath": "dist/client",
+            "index": "ClientApp/index.html",
+            "browser": "ClientApp/main.ts",
+            "tsConfig": "ClientApp/tsconfig.app.json",
+            "styles": ["ClientApp/styles.css"]
+          },
+          "configurations": {
+            "production": {
+              "outputHashing": "all",
+              "budgets": [
+                { "type": "initial", "maximumWarning": "350kB", "maximumError": "500kB" }
+              ]
+            },
+            "development": {
+              "optimization": false,
+              "extractLicenses": false,
+              "sourceMap": true
+            }
+          },
+          "defaultConfiguration": "production"
+        },
+        "serve": {
+          "builder": "@angular/build:dev-server",
+          "options": {
+            "buildTarget": "mycontractor:build:development",
+            "proxyConfig": "ClientApp/proxy.conf.json"
+          }
+        },
+        "test": {
+          "builder": "@angular/build:unit-test",
+          "options": {
+            "buildTarget": "mycontractor:build:development",
+            "tsConfig": "ClientApp/tsconfig.spec.json"
+          }
+        }
+      }
+    }
+  },
+  "cli": {
+    "analytics": false
+  }
+}

@@ -1,30 +1,33 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+using System.Globalization;
 using Microsoft.AspNetCore.Mvc;
 using MyContractor.Model;
 
-namespace MyContractor.Controllers
-{
-    [Route("api/[controller]")]
-    public class SampleDataController : Controller
-    {
-        private static string[] Summaries = new[]
-        {
-            "Freezing", "Bracing", "Chilly", "Cools", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
-        };
+namespace MyContractor.Controllers;
 
-        [HttpGet("[action]")]
-        public IEnumerable<WeatherForecast> WeatherForecasts()
+[ApiController]
+[Route("api/[controller]")]
+public sealed class SampleDataController : ControllerBase
+{
+    private static readonly string[] Summaries =
+    [
+        "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm",
+        "Balmy", "Hot", "Sweltering", "Scorching"
+    ];
+
+    [HttpGet("[action]")]
+    public IReadOnlyList<WeatherForecast> WeatherForecasts()
+    {
+        var today = DateOnly.FromDateTime(DateTime.UtcNow);
+        var forecasts = new WeatherForecast[5];
+
+        for (var index = 0; index < forecasts.Length; index++)
         {
-            var rng = new Random();
-            return Enumerable.Range(1, 5).Select(index => new WeatherForecast
-            {
-                DateFormatted = DateTime.Now.AddDays(index).ToString("d"),
-                TemperatureC = rng.Next(-20, 55),
-                Summary = Summaries[rng.Next(Summaries.Length)]
-            });
-        }        
+            forecasts[index] = new(
+                today.AddDays(index + 1).ToString("yyyy-MM-dd", CultureInfo.InvariantCulture),
+                Random.Shared.Next(-20, 55),
+                Summaries[Random.Shared.Next(Summaries.Length)]);
+        }
+
+        return forecasts;
     }
 }
